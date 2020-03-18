@@ -14,7 +14,8 @@ var app = express();
 
 // Basic Configuration 
 var port = process.env.PORT || 3000;
-mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
+var db_uri = process.env.DB_URI || 'mongodb://localhost';
+mongoose.connect(db_uri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 //Creating db schemas
 var CounterSchema = mongoose.Schema({
@@ -80,10 +81,10 @@ app.get("/api/hello", function (req, res) {
 });
 
 app.post("/api/shorturl/new", bodyparser.json(), function (req, res) {
-  console.log(req.body.original_url);
+  console.log(req.body.url_input);
   var urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
-  if(urlRegex.exec(req.body.original_url)) {
-    createShortUrl(req.body.original_url, function(err, data) {
+  if(urlRegex.exec(req.body.url_input)) {
+    createShortUrl(req.body.url_input, function(err, data) {
       if(err) {
         console.log(err);
         res.json({error :  'Internal server error'});
